@@ -11,7 +11,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
   description: 'A tutor marking tool for M269 in the 25J presentation',
   autoStart: true,
   activate: (app: JupyterFrontEnd) => {
-    console.log('JupyterLab extension m269-25j-marking-tool is activated!');
+    console.log('JupyterLab extension m269-25j-marking-tool is activated! hurrah');
   }
 };
 
