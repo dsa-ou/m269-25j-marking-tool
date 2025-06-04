@@ -119,3 +119,8 @@ dmypy.json
 
 # Yarn cache
 .yarn/
+
+# Testing files
+D3-STUDENT-UNMARKED.ipynb
+D3-STUDENT.ipynb
+marks.dat

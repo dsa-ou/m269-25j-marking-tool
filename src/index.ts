@@ -12,6 +12,7 @@ import { CodeCell } from '@jupyterlab/cells';
  */
 const prep_command = 'm269-25j-marking-tool:prep';
 const colourise_command = 'm269-25j-marking-tool:colourise';
+const prep_for_students = 'm269-25j-marking-tool:prep_for_students'
 
 // Initial code cell code pt 1
 const initial_code_cell_pt1 = `import pickle
@@ -23,11 +24,12 @@ pickle_file = "marks.dat"
 try:
     with open(pickle_file, "rb") as f:
         question_marks = pickle.load(f)
-except:
+except FileNotFoundError:
     print('Data file does not exist')`;
 
 // Initial code cell code pt 2
 const initial_code_cell_pt2 = `def on_radio_change(change, question_id, radio_widget):
+    """React to radio button changes."""
     print('Radio change')
     print(change)
     question_marks[question_id]["awarded"] = change["new"]
@@ -42,7 +44,7 @@ def generate_radio_buttons(question_id):
 
     # Create radio buttons
     radio_buttons = widgets.RadioButtons(
-        options=[key for key in question_marks[question_id].keys() if key != "awarded"],  # Exclude 'marked'
+        options=[key for key in question_marks[question_id].keys() if key != "awarded"],
         description="Grade:",
         disabled=False
     )
@@ -51,7 +53,8 @@ def generate_radio_buttons(question_id):
     else:
         radio_buttons.value = None  # Ensure no selection
     # Attach event listener
-    radio_buttons.observe(lambda change: on_radio_change(change, question_id, radio_buttons), names='value')
+    radio_buttons.observe(lambda change: on_radio_change(change, question_id,
+    radio_buttons), names='value')
 
     # Display the radio buttons
     display(radio_buttons)
@@ -152,7 +155,8 @@ const question_marks_tma02 = `    question_marks = {
         "Q4a": {"fail": 0, "pass": 2, "merit": 4, "distinction": 5, "awarded": None},
         "Q4bi": {"fail": 0, "pass": 1, "merit": 2, "distinction": 3, "awarded": None},
         "Q4bii": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
-        "Q4biii": {"fail": 0, "pass": 6, "merit": 10, "distinction": 14, "awarded": None},
+        "Q4biii": {"fail": 0, "pass": 6, "merit": 10, "distinction": 14,
+         "awarded": None},
         "Q5a": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
         "Q5b": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
         "Q5c": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
@@ -164,7 +168,25 @@ const question_marks_tma02 = `    question_marks = {
         "Q6c": {"fail": 0, "pass": 2, "merit": 4, "awarded": None},
     }`
 // TMA 03
-const question_marks_tma03 = ``;
+const question_marks_tma03 = `    question_marks = {
+        "Q1a": {"fail": 0, "pass": 4, "merit": 7, "distinction": 10, "awarded": None},
+        "Q1b": {"fail": 0, "pass": 1, "distinction": 3, "awarded": None},
+        "Q1c": {"fail": 0, "pass": 2, "distinction": 5, "awarded": None},
+        "Q1d": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
+        "Q1e": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
+        "Q2a": {"fail": 0, "pass": 2, "distinction": 4, "awarded": None},
+        "Q2b": {"fail": 0, "pass": 3, "distinction": 6, "awarded": None},
+        "Q2c": {"fail": 0, "pass": 4, "merit": 7, "distinction": 10, "awarded": None},
+        "Q2d": {"fail": 0, "pass": 2, "merit": 3, "distinction": 4, "awarded": None},
+        "Q2e": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
+        "Q3a": {"fail": 0, "pass": 3, "awarded": None},
+        "Q3b": {"fail": 0, "pass": 2, "merit": 3, "distinction": 6, "awarded": None},
+        "Q4a": {"fail": 0, "pass": 2, "merit": 6, "distinction": 4, "awarded": None},
+        "Q4b": {"fail": 0, "pass": 3, "merit": 6, "distinction": 8, "awarded": None},
+        "Q4c": {"fail": 0, "pass": 3, "merit": 6, "distinction": 8, "awarded": None},
+        "Q4d": {"fail": 0, "pass": 3, "merit": 6, "distinction": 8, "awarded": None},
+        "Q5" : {"fail": 0, "pass": 3, "awarded": None},
+    }`;
 
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'm269-25j-marking-tool:plugin',
@@ -182,6 +204,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
       }
       .m269-feedback {
         background-color:rgb(93, 163, 243) !important;
+      }
+      .m269-tutor {
+        background-color: rgb(255, 46, 46) !important;
       }
     `;
     document.head.appendChild(style);
@@ -202,7 +227,14 @@ const plugin: JupyterFrontEndPlugin<void> = {
             console.error('Notebook metadata is undefined');
             return;
           }
-
+          if (metadata["TMANUMBER"] != 1 && metadata["TMANUMBER"] != 2 && metadata["TMANUMBER"] != 3) {
+            alert("Could not identify TMA number.");
+            return;
+          }
+          if (metadata["TMAPRES"] != "25J") {
+            alert("This tool is only for presentation 25J. This TMA not identifiable as a 25J assessment.");
+            return;
+          }
           // Duplicate the file
           const oldName = currentWidget.context.path;
           const newName = oldName.replace(/\.ipynb$/, '-UNMARKED.ipynb');
@@ -220,7 +252,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
               question_marks = question_marks_tma01;
             } else if (metadata["TMANUMBER"] == 2) {
               question_marks = question_marks_tma02;
-            } else if (metadata["TMANUMBER"] == 2) {
+            } else if (metadata["TMANUMBER"] == 3) {
               question_marks = question_marks_tma03;
             } else {
               alert("TMA Not identified from metadata");
@@ -276,14 +308,30 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
           }
           // Insert final code cell at bottom
           //await app.commands.execute('notebook:activate-next-cell');
+          notebook.activeCellIndex = notebook.widgets.length -1;
+
+          console.log('Inserting final cell');
           await app.commands.execute('notebook:insert-cell-below');
+          console.log('Getting final cell');
           const finalCell = notebook.widgets[notebook.widgets.length - 1];
+          console.log(finalCell);
+          if (finalCell) {
+            console.log('Got final cell');
+            console.log(finalCell.model.type);
+          } else {
+            console.log('Not got final cell');
+          }
           if (finalCell && finalCell.model.type === 'code') {
+            console.log('got and it is code');
             (finalCell as CodeCell).model.sharedModel.setSource(`create_summary_table()`);
             finalCell.model.setMetadata('CELLTYPE','MARKCODE');
 
+          } else {
+            console.log('could not get or not code');
           }
+          console.log('activating');
           await app.commands.execute('notebook:run-cell');
+          console.log('done');
         }
       }
     });
@@ -310,16 +358,71 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
               currentCell.addClass('m269-feedback');
             } else if (celltype === "MARKCODE") {
               currentCell.addClass('m269-feedback');              
+            } else if (celltype === "SOLUTION" || celltype === "SECREF" || celltype === "GRADING") {
+              currentCell.addClass('m269-tutor');
             }
           }
         }
       }
     });
     // End colourise command
+
+    // Prep-for-students command
+    app.commands.addCommand(prep_for_students, {
+      label: 'M269 Prep for Student (MT)',
+      caption: 'M269 Prep for Student (MT)',
+      execute: async (args: any) => {
+        const currentWidget = app.shell.currentWidget;
+        if (currentWidget instanceof NotebookPanel) {
+          // Duplicate the file
+          const oldName = currentWidget.context.path;
+          const masterName = oldName;
+          //const newName = oldName.replace(/-Master(?=\.ipynb$)/, "");
+          const newName = oldName
+            .replace(/-Master(?=\.ipynb$)/, "")
+            .replace(/(?=\.ipynb$)/, "-STUDENT");
+
+          await currentWidget.context.save();
+
+          await app.serviceManager.contents.rename(oldName, newName);
+
+          await currentWidget.close();
+          
+          const newWidget = await app.commands.execute('docmanager:open', {
+            path: newName,
+            factory: 'Notebook'
+          });
+
+          if (newWidget && 'context' in newWidget) {
+            await (newWidget as NotebookPanel).context.ready;
+          }
+          
+          await app.serviceManager.contents.copy(newName, masterName);
+          
+          console.log('Notebook copied successfully:', newName);
+          // Iterate backwards over the cells
+          const notebook = newWidget.content;
+          for (let i = notebook.widgets.length - 1; i >= 0; i--) {
+            const cell = notebook.widgets[i];
+            const meta = cell.model.metadata as any;
+            const celltype = meta['CELLTYPE'];
+            // Do something with each cell
+            console.log(`Cell ${i} type: ${cell.model.type} - ${celltype}`);
+            if (celltype == 'SECREF' || celltype == 'SOLUTION' || celltype == 'GRADING') {
+              notebook.activeCellIndex = i;
+              await app.commands.execute('notebook:delete-cell');
+              console.log('... deleted.');
+            }
+          }
+        }
+      }
+    });
+
     const category = 'M269-25j';
     // Add commands to pallette
     palette.addItem({ command: prep_command, category, args: { origin: 'from palette' } });
     palette.addItem({ command: colourise_command, category, args: { origin: 'from palette' } })
+    palette.addItem({ command: prep_for_students, category, args: { origin: 'from palette' } })
   }
 };
 
