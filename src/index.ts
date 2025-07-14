@@ -140,7 +140,26 @@ def create_summary_table():
 
 // Question Marks JSON
 // TMA 01
-const question_marks_tma01 = ``;
+const question_marks_tma01 = `    question_marks = {
+        "Q1a": {"fail": 0, "pass": 2, "awarded": None},
+        "Q1b": {"fail": 0, "pass": 2, "awarded": None},
+        "Q1c": {"fail": 0, "pass": 2, "awarded": None},
+        "Q2a": {"fail": 0, "pass": 2, "merit": 3, "distinction": 5, "awarded": None},
+        "Q2bi": {"fail": 0, "pass": 4, "merit": 7, "distinction": 10, "awarded": None},
+        "Q2bii": {"fail": 0, "pass": 2, "awarded": None},
+        "Q2c": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
+        "Q2d": {"fail": 0, "pass": 2, "merit": 3, "distinction": 4, "awarded": None},
+        "Q3a": {"fail": 0, "pass": 4, "merit": 7, "distinction": 10, "awarded": None},
+        "Q3b": {"fail": 0, "pass": 2, "awarded": None},
+        "Q4a": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
+        "Q4b": {"fail": 0, "pass": 2, "merit": 4, "awarded": None},
+        "Q5a": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
+        "Q5b": {"fail": 0, "pass": 3, "merit": 5, "distinction": 8, "awarded": None},
+        "Q5c": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
+        "Q6a": {"fail": 0, "pass": 4, "merit": 7, "distinction": 10, "awarded": None},
+        "Q6b": {"fail": 0, "pass": 3, "merit": 6, "distinction": 9, "awarded": None},
+        "Q6c": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
+    }`;
 // TMA 02
 const question_marks_tma02 = `    question_marks = {
         "Q1a": {"fail": 0, "pass": 2, "awarded": None},
@@ -206,7 +225,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         background-color:rgb(93, 163, 243) !important;
       }
       .m269-tutor {
-        background-color: rgb(255, 46, 46) !important;
+        background-color: rgb(249, 142, 142) !important;
       }
     `;
     document.head.appendChild(style);
