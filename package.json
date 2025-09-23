@@ -1,6 +1,6 @@
 {
     "name": "m269-25j-marking-tool",
-    "version": "0.1.0",
+    "version": "0.9.0",
     "description": "A tutor marking tool for M269 in the 25J presentation",
     "keywords": [
         "jupyter",
