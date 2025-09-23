@@ -557,6 +557,7 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
             const cell = notebook.activeCell;
             const code = `%run -i ${fullPath}`;
             (cell as CodeCell).model.sharedModel.setSource(code);
+            await app.commands.execute('notebook:run-cell');
             // 2. Check TMA number
             const metadata = currentWidget?.context?.model?.metadata;
             console.log('metadata');
