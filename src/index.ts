@@ -10,6 +10,7 @@ import { Contents } from '@jupyterlab/services';
 import { PageConfig } from '@jupyterlab/coreutils';
 import { showDialog, Dialog } from '@jupyterlab/apputils';
 import { Widget } from '@lumino/widgets';
+import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
 //import { IObservableJSON } from '@jupyterlab/observables';
 
@@ -299,17 +300,40 @@ export async function decrypt(): Promise<string> {
   return new TextDecoder().decode(decryptedBuffer);
 }
 
+function getSetting(settings: ISettingRegistry.ISettings, key: string, default_value: string): string {
+  try {
+    const value = settings.get(key).composite;
+    return typeof value === 'string' ? value : '';
+  } catch (err) {
+    console.warn(`Error reading setting "${key}":`, err);
+    return default_value;
+  }
+}
+
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'm269-25j-marking-tool:plugin',
   description: 'A tutor marking tool for M269 in the 25J presentation',
   autoStart: true,
-  requires: [ICommandPalette, INotebookTracker],
-  activate: (app: JupyterFrontEnd, palette: ICommandPalette, notebookTracker: INotebookTracker) => {
+  requires: [ICommandPalette, INotebookTracker, ISettingRegistry],
+  activate: async (
+    app: JupyterFrontEnd, 
+    palette: ICommandPalette, 
+    notebookTracker: INotebookTracker, 
+    settingRegistry: ISettingRegistry
+  ) => {
     console.log('JupyterLab extension m269-25j-marking-tool is activated! hurrah');
-
+    console.log('Loading settings registry');
+    const settings = await settingRegistry.load('m269-25j-marking-tool:plugin');
+    console.log('Loading colours');
+    const answer_colour = getSetting(settings,'answer_colour','rgb(255, 255, 204)');
+    const feedback_colour = getSetting(settings,'feedback_colour','rgb(93, 163, 243)');
+    const tutor_colour = getSetting(settings,'tutor_colour','rgb(249, 142, 142)');
+    console.log('Answers: '+answer_colour);
+    console.log('Feedback: '+feedback_colour);
+    console.log('Tutor: '+tutor_colour);
     // Inject custom styles
     const style = document.createElement('style');
-    style.textContent = `
+    /*style.textContent = `
       .m269-answer {
         background-color:rgb(255, 255, 204) !important;
       }
@@ -318,6 +342,17 @@ const plugin: JupyterFrontEndPlugin<void> = {
       }
       .m269-tutor {
         background-color: rgb(249, 142, 142) !important;
+      }
+    `;*/
+    style.textContent = `
+      .m269-answer {
+        background-color:`+answer_colour+` !important;
+      }
+      .m269-feedback {
+        background-color:`+feedback_colour+` !important;
+      }
+      .m269-tutor {
+        background-color: `+tutor_colour+` !important;
       }
     `;
     document.head.appendChild(style);

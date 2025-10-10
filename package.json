@@ -1,6 +1,6 @@
 {
     "name": "m269-25j-marking-tool",
-    "version": "1.0.4",
+    "version": "1.1.0",
     "description": "A tutor marking tool for M269 in the 25J presentation",
     "keywords": [
         "jupyter",
@@ -19,7 +19,8 @@
     "files": [
         "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
         "style/**/*.{css,js,eot,gif,html,jpg,json,png,svg,woff2,ttf}",
-        "src/**/*.{ts,tsx}"
+        "src/**/*.{ts,tsx}",
+        "schema/**/*.json"
     ],
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
@@ -92,7 +93,8 @@
     },
     "jupyterlab": {
         "extension": true,
-        "outputDir": "m269_25j_marking_tool/labextension"
+        "outputDir": "m269_25j_marking_tool/labextension",
+        "schemaDir": "schema"
     },
     "eslintIgnore": [
         "node_modules",
