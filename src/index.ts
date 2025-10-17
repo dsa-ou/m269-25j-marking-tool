@@ -477,6 +477,8 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
           }
           console.log('activating');
           await app.commands.execute('notebook:run-cell');
+          // Automatically run the colourise command after prep
+          await app.commands.execute(colourise_command);
           console.log('done');
         }
       }
@@ -723,6 +725,18 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
 
         notebooks = notebooks.filter(path => !path.includes('-UNMARKED'));
 
+        // DEBUG
+        const baseUrl = PageConfig.getBaseUrl();
+        console.log('OPEN ALL DEBUGGING START');
+        for (const path of notebooks) {
+          const url = baseUrl + 'lab/tree/' + encodeURIComponent(path);
+          console.log('>> '+url);
+        }
+        console.log('OPEN ALL DEBUGGING END');
+
+
+        // END DEBUG
+
         // (optional) sanity check so you don't open hundreds at once
         if (notebooks.length > 20) {
           const ok = window.confirm(
@@ -732,7 +746,7 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
         }
         
         // 2) open each notebook in a new browser tab
-        const baseUrl = PageConfig.getBaseUrl();
+        //const baseUrl = PageConfig.getBaseUrl();
         for (const path of notebooks) {
           const url = baseUrl + 'lab/tree/' + encodeURIComponent(path);
           window.open(url, '_blank');
