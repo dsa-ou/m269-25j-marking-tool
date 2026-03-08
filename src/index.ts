@@ -181,11 +181,9 @@ const question_marks_tma02 = `    question_marks = {
         "Q3a": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
         "Q3bi": {"fail": 0, "pass": 1, "merit": 3, "awarded": None},
         "Q3bii": {"fail": 0, "pass": 2, "merit": 4, "awarded": None},
-        "Q4a": {"fail": 0, "pass": 2, "merit": 4, "distinction": 5, "awarded": None},
-        "Q4bi": {"fail": 0, "pass": 1, "merit": 2, "distinction": 3, "awarded": None},
-        "Q4bii": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
-        "Q4biii": {"fail": 0, "pass": 6, "merit": 10, "distinction": 14,
-         "awarded": None},
+        "Q4a": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
+        "Q4b": {"fail": 0, "pass": 2, "distinction": 4, "awarded": None},
+        "Q4c": {"fail": 0, "pass": 6, "merit": 10, "distinction": 14, "awarded": None},
         "Q5a": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
         "Q5b": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
         "Q5c": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
@@ -193,8 +191,8 @@ const question_marks_tma02 = `    question_marks = {
         "Q5e": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
         "Q5f": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
         "Q6a": {"fail": 0, "pass": 7, "merit": 12, "distinction": 16, "awarded": None},
-        "Q6b": {"fail": 0, "pass": 2, "merit": 3, "distinction": 4, "awarded": None},
-        "Q6c": {"fail": 0, "pass": 2, "merit": 4, "awarded": None},
+        "Q6bi": {"fail": 0, "pass": 2, "distinction": 4, "awarded": None},
+        "Q6bii": {"fail": 0, "pass": 2, "distinction": 4, "awarded": None},
     }`
 // TMA 03
 const question_marks_tma03 = `    question_marks = {
