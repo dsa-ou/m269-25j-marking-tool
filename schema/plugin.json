@@ -6,7 +6,8 @@
   "properties": {
     "answer_colour":   { "type": "string", "default": "rgb(255, 255, 204)" },
     "feedback_colour": { "type": "string", "default": "rgb(93, 163, 243)" },
-    "tutor_colour":    { "type": "string", "default": "rgb(249, 142, 142)" }
+    "tutor_colour":    { "type": "string", "default": "rgb(249, 142, 142)" },
+    "decrypt_key":     { "type": "string", "default": "" }
   },
   "additionalProperties": false
 }
