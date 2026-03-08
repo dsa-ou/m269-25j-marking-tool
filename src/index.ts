@@ -9,9 +9,10 @@ import { ContentsManager } from '@jupyterlab/services';
 import { Contents } from '@jupyterlab/services';
 import { PageConfig } from '@jupyterlab/coreutils';
 import { showDialog, Dialog } from '@jupyterlab/apputils';
-import { Widget } from '@lumino/widgets';
+import { Widget, Menu } from '@lumino/widgets';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { IDocumentManager } from '@jupyterlab/docmanager';
+import { IMainMenu } from '@jupyterlab/mainmenu';
 
 //import { IObservableJSON } from '@jupyterlab/observables';
 
@@ -380,13 +381,14 @@ const plugin: JupyterFrontEndPlugin<void> = {
   id: 'm269-25j-marking-tool:plugin',
   description: 'A tutor marking tool for M269 in the 25J presentation',
   autoStart: true,
-  requires: [ICommandPalette, INotebookTracker, ISettingRegistry, IDocumentManager],
+  requires: [ICommandPalette, INotebookTracker, ISettingRegistry, IDocumentManager, IMainMenu as any],
   activate: async (
-    app: JupyterFrontEnd, 
-    palette: ICommandPalette, 
-    notebookTracker: INotebookTracker, 
+    app: JupyterFrontEnd,
+    palette: ICommandPalette,
+    notebookTracker: INotebookTracker,
     settingRegistry: ISettingRegistry,
-    docManager: IDocumentManager
+    docManager: IDocumentManager,
+    mainMenu: IMainMenu
   ) => {
     console.log('JupyterLab extension m269-25j-marking-tool is activated! hurrah');
     console.log('Loading settings registry');
@@ -746,8 +748,16 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
               currentCell.addClass('m269-answer');
             } else if (celltype === "FEEDBACK") {
               currentCell.addClass('m269-feedback');
+              if (currentCell.model.type === 'code') {
+                notebook.activeCellIndex = i;
+                await app.commands.execute('notebook:run-cell');
+              }
             } else if (celltype === "MARKCODE") {
-              currentCell.addClass('m269-feedback');              
+              currentCell.addClass('m269-feedback');
+              if (currentCell.model.type === 'code') {
+                notebook.activeCellIndex = i;
+                await app.commands.execute('notebook:run-cell');
+              }
             } else if (celltype === "SOLUTION" || celltype === "SECREF" || celltype === "GRADING") {
               currentCell.addClass('m269-tutor');
             }
@@ -1016,6 +1026,14 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
     palette.addItem({ command: al_tests_command, category, args: {origin: 'from palette' }});
     palette.addItem({ command: open_all_tmas, category, args: {origin: 'from palette' }});
     palette.addItem({ command: finish_marking, category, args: {origin: 'from palette' }});
+
+    // Add M269 menu to menubar
+    const menu = new Menu({ commands: app.commands });
+    menu.title.label = 'M269';
+    menu.addItem({ command: prep_command });
+    menu.addItem({ command: colourise_command });
+    menu.addItem({ command: finish_marking });
+    mainMenu.addMenu(menu as any, true, { rank: 1000 });
   }
 };
 
