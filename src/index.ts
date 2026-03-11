@@ -3,7 +3,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 import { ICommandPalette } from '@jupyterlab/apputils';
-import { INotebookTracker, NotebookPanel } from '@jupyterlab/notebook';
+import { INotebookTracker, NotebookPanel, NotebookActions } from '@jupyterlab/notebook';
 import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
 import { ContentsManager } from '@jupyterlab/services';
 import { Contents } from '@jupyterlab/services';
@@ -180,8 +180,8 @@ const question_marks_tma02 = `    question_marks = {
         "Q2b": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
         "Q2c": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
         "Q3a": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
-        "Q3bi": {"fail": 0, "pass": 1, "merit": 3, "awarded": None},
-        "Q3bii": {"fail": 0, "pass": 2, "merit": 4, "awarded": None},
+        "Q3bi": {"fail": 0, "pass": 1, "distinction": 3, "awarded": None},
+        "Q3bii": {"fail": 0, "distinction": 4, "awarded": None},
         "Q4a": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
         "Q4b": {"fail": 0, "pass": 2, "distinction": 4, "awarded": None},
         "Q4c": {"fail": 0, "pass": 6, "merit": 10, "distinction": 14, "awarded": None},
@@ -271,45 +271,6 @@ async function walkDir(
   return collected;
 }
 
-function extractRadioValueFromRepr(repr: string): string | null {
-  // 1. Extract the options list
-  const optionsMatch = repr.match(/options=\(([^)]+)\)/);
-  if (!optionsMatch) {
-    console.log("No options match");
-    return null;
-  }
-
-  const optionsRaw = optionsMatch[1]; // "'fail', 'pass', 'merit', 'distinction'"
-
-  // Split on comma + whitespace between quoted strings
-  const options = optionsRaw
-    .split(/',\s*'|" ,\s*"/)
-    .map(s => s.replace(/^['"]+|['"]+$/g, "").trim());
-
-  // 2. Extract value= prefix
-  const valueMatch = repr.match(/value\s*=\s*['"]([^'"]*)/);
-  if (!valueMatch) {
-    console.log("No value match");
-    return null;
-  }
-
-  let prefix = valueMatch[1];
-
-  // Remove every known ellipsis form
-  prefix = prefix
-    .replace(/\u2026/g, "")  // single char …
-    .replace(/\.{3}/g, "")   // three dots
-    .replace(/\s+$/g, "");   // trailing whitespace
-
-  // 3. Find full match
-  const full = options.find(o => o.startsWith(prefix));
-
-  if (!full) {
-    console.log("No option starts with:", prefix, "inside options:", options);
-  }
-
-  return full || null;
-}
 
 export async function decrypt(keyText: string): Promise<string> {
   // Replace this with your encrypted base64-encoded string
@@ -435,9 +396,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
         if (currentWidget instanceof NotebookPanel) {
           const notebook = currentWidget.content;
           const metadata = currentWidget?.context?.model?.metadata;
-          console.log('metadata');
-          console.log(metadata);
-          console.log(metadata["TMANUMBER"]);
+          //console.log('metadata');
+          //console.log(metadata);
+          //xonsole.log(metadata["TMANUMBER"]);
           if (!metadata) {
             console.error('Notebook metadata is undefined');
             return;
@@ -454,13 +415,13 @@ const plugin: JupyterFrontEndPlugin<void> = {
           const oldName = currentWidget.context.path;
           const newName = oldName.replace(/\.ipynb$/, '-UNMARKED.ipynb');
           await app.serviceManager.contents.copy(oldName, newName);
-          console.log('Notebook copied successfully:', newName);
+          //console.log('Notebook copied successfully:', newName);
           // Insert initial code cell
           notebook.activeCellIndex = 0;
           notebook.activate();
           await app.commands.execute('notebook:insert-cell-above');
           const cell = notebook.activeCell;
-          console.log("Getting TMA number");
+          //console.log("Getting TMA number");
           if (cell && cell.model.type === 'code') {
             let question_marks = "";
             if (metadata["TMANUMBER"] == 1) {
@@ -480,16 +441,16 @@ const plugin: JupyterFrontEndPlugin<void> = {
               cell.inputHidden = true;
             }
           }
-          console.log("inserting marking forms");
+          //console.log("inserting marking forms");
           // Insert marking cell after every cell with metadata "QUESTION"
           for (let i = 0; i < notebook.widgets.length; i++) {
-            console.log(i);
+            //console.log(i);
             const currentCell = notebook.widgets[i];
             const meta = currentCell.model.metadata as any;
             const celltype = meta['CELLTYPE'];
-            console.log(celltype);
+            //console.log(celltype);
             const questionValue = meta['QUESTION'];
-            console.log(questionValue);
+            //console.log(questionValue);
             if (celltype == 'TMACODE') {
               notebook.activeCellIndex = i;
               await app.commands.execute('notebook:run-cell');
@@ -511,11 +472,11 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
               await app.commands.execute('notebook:change-cell-to-markdown');
               insertedCell = notebook.activeCell;
               if (insertedCell && insertedCell.model.type === 'markdown') {
-                console.log('markdown cell being metadatad');
+                //console.log('markdown cell being metadatad');
                 (insertedCell as CodeCell).model.sharedModel.setSource(`Feedback:`);
                 insertedCell.model.setMetadata('CELLTYPE','FEEDBACK');
               } else {
-                console.log('markdown cell cannot be metadatad');
+                //console.log('markdown cell cannot be metadatad');
               }
               await app.commands.execute('notebook:run-cell');
               i++; // Skip over inserted cell to avoid infinite loop
@@ -525,32 +486,32 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
           //await app.commands.execute('notebook:activate-next-cell');
           notebook.activeCellIndex = notebook.widgets.length -1;
 
-          console.log('Inserting final cell');
+          //console.log('Inserting final cell');
           await app.commands.execute('notebook:insert-cell-below');
-          console.log('Getting final cell');
+          //console.log('Getting final cell');
           const finalCell = notebook.widgets[notebook.widgets.length - 1];
-          console.log(finalCell);
+          //console.log(finalCell);
           if (finalCell) {
-            console.log('Got final cell');
-            console.log(finalCell.model.type);
+            //console.log('Got final cell');
+            //console.log(finalCell.model.type);
           } else {
-            console.log('Not got final cell');
+            //console.log('Not got final cell');
           }
           if (finalCell && finalCell.model.type === 'code') {
-            console.log('got and it is code');
+            //console.log('got and it is code');
             (finalCell as CodeCell).model.sharedModel.setSource(`create_summary_table()`);
             finalCell.model.setMetadata('CELLTYPE','MARKCODE');
 
           } else {
-            console.log('could not get or not code');
+            //console.log('could not get or not code');
           }
-          console.log('activating');
+          //console.log('activating');
           await app.commands.execute('notebook:run-cell');
           // Automatically run the colourise command after prep
           await app.commands.execute(colourise_command);
           // Automatically run AL Tests after colourise
           await app.commands.execute(al_tests_command);
-          console.log('done');
+          //console.log('done');
         }
       }
     });
@@ -568,6 +529,8 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
             console.warn("Not a document widget");
             return;
           }
+          // Run colourise on original notebook first to ensure all MARKCODE cells have fresh outputs
+          await app.commands.execute(colourise_command);
           await context.save();
           const content = await context.model.toJSON();
 
@@ -586,23 +549,30 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
           let widget: NotebookPanel | null = null;
           for (let i = 0; i < 50; i++) {   // retry ~50 times over 1s
             widget = docManager.findWidget(newPath, 'Notebook') as NotebookPanel;
-            console.log(i);
+            //console.log(i);
             if (widget) break;
             await new Promise(r => setTimeout(r, 20));
           }
 
           widget = docManager.findWidget(newPath, 'Notebook') as NotebookPanel;
           if (!widget) {
-            console.error('Could not find new widget');
+            console.error('Could not find new widget. Exiting.');
             return;
           }
 
           await widget.context.ready;
 
+          // Start kernel automatically using the same kernelspec as the original
+          const kernelName = (widget.context.model?.metadata?.kernelspec as any)?.name || 'python3';
+          await widget.context.sessionContext.changeKernel({ name: kernelName });
+
+          // Focus the -MARKED notebook so notebook:run-cell targets it
+          app.shell.activateById(widget.id);
+
           currentWidget = widget
 
           //currentWidget = app.shell.currentWidget;
-          
+
           if (currentWidget instanceof NotebookPanel) {
             context = docManager.contextForWidget(currentWidget);
           } else {
@@ -612,9 +582,9 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
           
           const notebook = currentWidget.content;
           const metadata = currentWidget?.context?.model?.metadata;
-          console.log('metadata');
+          console.log('Checking metadata');
           console.log(metadata);
-          console.log(metadata["TMANUMBER"]);
+          //console.log(metadata["TMANUMBER"]);
           if (!metadata) {
             console.error('Notebook metadata is undefined');
             return;
@@ -627,6 +597,7 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
             alert("This tool is only for presentation 25J. This TMA not identifiable as a 25J assessment.");
             return;
           }
+          console.log("-- Running mark code cells --");
           // Run mark code cells
           for (let i = 0; i < notebook.widgets.length; i++) {
               const currentCell = notebook.widgets[i];
@@ -635,9 +606,29 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
             // console.log(celltype);
               if (celltype === "MARKCODE") {
                 notebook.activeCellIndex = i;
-                await app.commands.execute('notebook:run-cell');
+                await NotebookActions.run(notebook, widget.context.sessionContext);
               }
           }
+          console.log("-- Querying kernel for awarded grades --");
+          // Get all awarded grades from kernel as JSON (question_marks is in kernel memory after forward pass)
+          let marksData: Record<string, string | null> = {};
+          const kernel = widget.context.sessionContext.session?.kernel;
+          if (kernel) {
+            const future = kernel.requestExecute({
+              code: 'import json; print(json.dumps({k: v.get("awarded") for k, v in question_marks.items()}))'
+            });
+            await new Promise<void>(resolve => {
+              future.onIOPub = (msg: any) => {
+                if (msg.header.msg_type === 'stream' && msg.content.name === 'stdout') {
+                  try { marksData = JSON.parse(msg.content.text.trim()); } catch (e) { console.error('Failed to parse marks JSON:', e); }
+                }
+              };
+              future.done.then(() => resolve());
+            });
+          }
+          console.log("marksData:", marksData);
+
+          console.log("-- Removing all marking cells --");
           // Remove all marking cells
           for (let i = notebook.widgets.length-1; i >= 0;  i--) {
               const currentCell = notebook.widgets[i];
@@ -645,70 +636,40 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
               const celltype = meta['CELLTYPE'];
               if (celltype === "MARKCODE") {
                 notebook.activeCellIndex = i;
-                // Extract grade text
-                //console.log('TEST');
                 if (notebook.activeCell instanceof CodeCell) {
+                  const cellSrc = (notebook.activeCell as CodeCell).model.sharedModel.getSource();
                   const outputs = notebook.activeCell.model.outputs;
-                  let textOutput = '';
-                  for (let i =0; i < outputs.length; i++) {
-                    const out = outputs.get(i);
-                    for (const mimeType of Object.keys(out.data)) {
-                      if (mimeType === 'text/plain') {
-                        const val = out.data[mimeType];
-                        textOutput += Array.isArray(val) ? val.join('\n') : val;
-                        textOutput += '\n';
-                      }
-                    }
-                  }
-                  //console.log(textOutput);
-                  //const match = textOutput.match(/value='([^']+)'/);
-                  //const grade = match ? match[1] : null;
-                  const grade = extractRadioValueFromRepr(textOutput);
                   let html = null;
-                  if (grade == null) {
-                    console.log('possible iPython found')
-                    if (notebook.activeCell instanceof CodeCell) {
-                      const outputs = notebook.activeCell.model.outputs;
-                      console.log(outputs);
-                      for (let i = 0; i < outputs.length; i++) {
-                        const out = outputs.get(i);
-                        html = (out as any).data?.['text/html'];
-                        if (typeof html === 'string') {
-                            console.log(html);
-                        }
+                  for (let j = 0; j < outputs.length; j++) {
+                    const out = outputs.get(j);
+                    const htmlVal = (out as any).data?.['text/html'];
+                    if (Array.isArray(htmlVal)) { html = htmlVal.join(''); }
+                    else if (typeof htmlVal === 'string') { html = htmlVal; }
+                  }
+                  // Look up grade by question ID extracted from cell source
+                  const qidMatch = cellSrc.match(/generate_radio_buttons\(['"]([^'"]+)['"]\)/);
+                  const questionId = qidMatch ? qidMatch[1] : null;
+                  const grade = questionId ? (marksData[questionId] ?? null) : null;
+                  console.log(`MARKCODE cell qid:${questionId} → grade: ${grade}, hasHtml: ${html !== null}`);
+                  if (grade != null) {
+                    NotebookActions.changeCellType(notebook, 'markdown');
+                    const updated = notebook.activeCell as unknown as MarkdownCell | null;
+                    if (updated) {
+                      (updated as any).model.sharedModel.setSource("Grade awarded: " + grade);
+                    }
+                  } else if (html != null) {
+                    NotebookActions.changeCellType(notebook, 'markdown');
+                    const updated = notebook.activeCell as unknown as MarkdownCell | null;
+                    if (updated) {
+                      try {
+                        (updated as any).model.sharedModel.setSource(htmlTableToMarkdown(html));
+                      } catch (e) {
+                        console.error('htmlTableToMarkdown failed:', e);
+                        (updated as any).model.sharedModel.setSource(html);
                       }
                     }
-                  }
-                  console.log(grade);
-                  console.log(1);
-                  const active = notebook.activeCell;
-                  // Put grade text in cell
-                  if (active && active instanceof CodeCell){//} && grade != null) {
-                    console.log(1.1);
-                    await app.commands.execute('notebook:change-cell-to-markdown');
-                    console.log(1.2);
-                  }
-                  console.log(2);
-                  const updated = notebook.activeCell;
-                  console.log(3);
-                  if (updated && updated instanceof MarkdownCell) {
-                    console.log(4);
-                    if (grade == null && html != null) {
-                      console.log(5);
-                      console.log("-->"+html+"<--");
-                      console.log(5.5);
-                      //(updated as MarkdownCell).model.sharedModel.setSource("Six Seven");
-                      const mdTable = htmlTableToMarkdown(html);
-                      (updated as MarkdownCell).model.sharedModel.setSource(mdTable);
-                      await app.commands.execute('notebook:run-cell');                      
-                    } else {
-                      if (grade == null) {
-                        await app.commands.execute('notebook:delete-cell');
-                      } else {
-                        console.log(6);
-                        (updated as MarkdownCell).model.sharedModel.setSource("Grade awarded: "+grade);
-                      }
-                    }
+                  } else {
+                    notebook.model?.sharedModel.deleteCell(i);
                   }
                 }
               } else {
@@ -718,12 +679,16 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
                   if (notebook.activeCell instanceof CodeCell) {
                     let existing = (currentCell as CodeCell).model.sharedModel.getSource();
                     if (existing.endsWith('al_tests.py')) {
-                        await app.commands.execute('notebook:delete-cell');
+                        notebook.model?.sharedModel.deleteCell(i);
                     }
                   }
                 }
               }
-          }      
+          }
+          await app.commands.execute(colourise_command);
+          NotebookActions.renderAllMarkdown(notebook);
+          await widget.context.save();
+          alert('MARKED file complete. This TMA can be returned.');
         }
       }
     });
@@ -737,13 +702,13 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
         const currentWidget = app.shell.currentWidget;
         if (currentWidget instanceof NotebookPanel) {
           const notebook = currentWidget.content;
-          console.log('Colourising cells');
+          //console.log('Colourising cells');
           for (let i = 0; i < notebook.widgets.length; i++) {
-            console.log(i);
+            //console.log(i);
             const currentCell = notebook.widgets[i];
             const meta = currentCell.model.metadata as any;
             const celltype = meta['CELLTYPE'];
-            console.log(celltype);
+            //console.log(celltype);
             if (celltype === 'ANSWER') {
               currentCell.addClass('m269-answer');
             } else if (celltype === "FEEDBACK") {
