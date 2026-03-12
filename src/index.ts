@@ -29,7 +29,17 @@ const finish_marking = 'm269-25j-marking-tool:finish_marking';
 // Initial code cell code pt 1
 const initial_code_cell_pt1 = `import pickle
 from IPython.display import display, Markdown, HTML
+from typing import TypedDict
 import ipywidgets as widgets  # Ensure ipywidgets is imported
+
+class ObserveChange(TypedDict):
+    """Type definitios for radio buttons."""
+
+    new: str | None
+    old: str | None
+    name: str
+    owner: widgets.RadioButtons
+    type: str
 
 # Dictionary to store marks
 pickle_file = "marks.dat"
@@ -40,7 +50,11 @@ except FileNotFoundError:
     print('Data file does not exist')`;
 
 // Initial code cell code pt 2
-const initial_code_cell_pt2 = `def on_radio_change(change, question_id, radio_widget):
+const initial_code_cell_pt2 = `def on_radio_change(
+    change: ObserveChange,
+    question_id: str,
+    _radio_widget: widgets.RadioButtons,
+) -> None:
     """React to radio button changes."""
     print('Radio change')
     print(change)
@@ -48,7 +62,7 @@ const initial_code_cell_pt2 = `def on_radio_change(change, question_id, radio_wi
     with open("marks.dat", "wb") as f:  # "wb" = write binary mode
         pickle.dump(question_marks, f)
 
-def generate_radio_buttons(question_id):
+def generate_radio_buttons(question_id: str) -> None:
     """Create radio buttons linked to stored_answers, updating a Markdown cell."""
     if question_id not in question_marks:
         raise ValueError(f"Question {question_id} not found in dictionary")
@@ -56,7 +70,11 @@ def generate_radio_buttons(question_id):
 
     # Create radio buttons
     radio_buttons = widgets.RadioButtons(
-        options=[(f"{key} ({question_marks[question_id][key]})", key) for key in question_marks[question_id].keys() if key != "awarded"],
+        options = [
+            (f"{key} ({question_marks[question_id][key]})", key)
+            for key in question_marks[question_id].keys()
+            if key != "awarded"
+        ],
         description="Grade:",
         disabled=False
     )
@@ -72,7 +90,7 @@ def generate_radio_buttons(question_id):
     display(radio_buttons)
 
 
-def create_summary_table():
+def create_summary_table() -> None:
     """Generate and display an HTML table from the question_marks dictionary."""
     if not question_marks:
         display(HTML("<p>No data available.</p>"))
@@ -173,9 +191,9 @@ const question_marks_tma01 = `    question_marks = {
     }`;
 // TMA 02
 const question_marks_tma02 = `    question_marks = {
-        "Q1a": {"fail": 0, "pass": 2, "awarded": None},
-        "Q1b": {"fail": 0, "pass": 2, "awarded": None},
-        "Q1c": {"fail": 0, "pass": 2, "awarded": None},
+        "Q1a": {"fail": 0, "distinction": 2, "awarded": None},
+        "Q1b": {"fail": 0, "distinction": 2, "awarded": None},
+        "Q1c": {"fail": 0, "distinction": 2, "awarded": None},
         "Q2a": {"fail": 0, "pass": 3, "merit": 6, "distinction": 9, "awarded": None},
         "Q2b": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
         "Q2c": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
@@ -185,12 +203,12 @@ const question_marks_tma02 = `    question_marks = {
         "Q4a": {"fail": 0, "pass": 2, "merit": 4, "distinction": 6, "awarded": None},
         "Q4b": {"fail": 0, "pass": 2, "distinction": 4, "awarded": None},
         "Q4c": {"fail": 0, "pass": 6, "merit": 10, "distinction": 14, "awarded": None},
-        "Q5a": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
-        "Q5b": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
-        "Q5c": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
-        "Q5d": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
+        "Q5a": {"fail": 0, "distinction": 2, "awarded": None},
+        "Q5b": {"fail": 0, "distinction": 2, "awarded": None},
+        "Q5c": {"fail": 0, "distinction": 2, "awarded": None},
+        "Q5d": {"fail": 0, "distinction": 2, "awarded": None},
         "Q5e": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
-        "Q5f": {"fail": 0, "pass": 1, "merit": 2, "awarded": None},
+        "Q5f": {"fail": 0, "distinction": 2, "awarded": None},
         "Q6a": {"fail": 0, "pass": 7, "merit": 12, "distinction": 16, "awarded": None},
         "Q6bi": {"fail": 0, "pass": 2, "distinction": 4, "awarded": None},
         "Q6bii": {"fail": 0, "pass": 2, "distinction": 4, "awarded": None},
@@ -239,7 +257,7 @@ except NameError:
   },
   2: {
     'Q2a'  : 'test(power, al_test_table_tma02_q2a)',
-    'Q4biii' : 'al_test_tma02_q4biii()',
+    'Q4c' : 'al_test_tma02_q4biii()',
     'Q6a'  : 'al_test_tma02_q6a()'
   },
   3: {
