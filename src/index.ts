@@ -8,7 +8,7 @@ import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
 import { ContentsManager } from '@jupyterlab/services';
 import { Contents } from '@jupyterlab/services';
 import { PageConfig } from '@jupyterlab/coreutils';
-import { showDialog, Dialog } from '@jupyterlab/apputils';
+import { showDialog, Dialog, InputDialog } from '@jupyterlab/apputils';
 import { Widget, Menu } from '@lumino/widgets';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { IDocumentManager } from '@jupyterlab/docmanager';
@@ -25,6 +25,7 @@ const prep_for_students = 'm269-25j-marking-tool:prep_for_students';
 const al_tests_command = 'm269-25j-prep-al-tests';
 const open_all_tmas = 'm269-25j-marking-tool:open_all_tmas';
 const finish_marking = 'm269-25j-marking-tool:finish_marking';
+const set_tests_location_command = 'm269-25j-marking-tool:set_tests_location';
 
 // Initial code cell code pt 1
 const initial_code_cell_pt1 = `import pickle
@@ -858,7 +859,11 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
         const notebookPath = currentWidget?.context.path ?? ""
         const upLevels = notebookPath.split("/").length - 1;
         const relPathToRoot = Array(upLevels).fill("..").join("/");
-        const fullPath = relPathToRoot ? `${relPathToRoot}/al_tests.py` : "al_tests.py";
+        const testsLocation = getSetting(settings, 'tests_location', '');
+        const filePath = testsLocation ? `${testsLocation}/al_tests.py` : 'al_tests.py';
+        const fullPath = testsLocation
+          ? (relPathToRoot ? `${relPathToRoot}/${testsLocation}/al_tests.py` : `${testsLocation}/al_tests.py`)
+          : (relPathToRoot ? `${relPathToRoot}/al_tests.py` : 'al_tests.py');
         let fileContent: string;
         try {
           let decryptKey = getSetting(settings, 'decrypt_key', '');
@@ -876,8 +881,6 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
           alert("Decryption failed: " + (err instanceof Error ? err.message : err));
           return;
         }
-        //alert('here');
-        const filePath = 'al_tests.py';  // This is in the root folder
         try {
           await contents.save(filePath, {
             type: 'file',
@@ -1001,6 +1004,53 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
       }
     });
 
+    // Set tests location command
+    app.commands.addCommand(set_tests_location_command, {
+      label: 'M269 Set Tests Location',
+      caption: 'M269 Set Tests Location',
+      execute: async () => {
+        const current = getSetting(settings, 'tests_location', '');
+        const result = await InputDialog.getText({
+          title: 'Set Tests Location',
+          label: 'Enter a readable and writable directory path:',
+          placeholder: '/path/to/tests',
+          text: current
+        });
+        if (!result.button.accept || result.value === null) {
+          return;
+        }
+        const path = result.value.trim();
+        if (!path) {
+          await showDialog({ title: 'Invalid Path', body: 'Path cannot be empty.', buttons: [Dialog.okButton()] });
+          return;
+        }
+        // Validate readable: try to get the directory
+        const contents = app.serviceManager.contents;
+        try {
+          const item = await contents.get(path, { content: false });
+          if (item.type !== 'directory') {
+            await showDialog({ title: 'Invalid Path', body: `"${path}" is not a directory.`, buttons: [Dialog.okButton()] });
+            return;
+          }
+        } catch {
+          await showDialog({ title: 'Invalid Path', body: `Cannot read "${path}". Check the path exists and is accessible.`, buttons: [Dialog.okButton()] });
+          return;
+        }
+        // Validate writable: try to save and delete a temp file
+        const tmpPath = path.replace(/\/$/, '') + '/m269_write_test.tmp';
+        try {
+          await contents.save(tmpPath, { type: 'file', format: 'text', content: '' });
+          await contents.delete(tmpPath);
+        } catch {
+          await showDialog({ title: 'Invalid Path', body: `"${path}" does not appear to be writable.`, buttons: [Dialog.okButton()] });
+          return;
+        }
+        await settings.set('tests_location', path);
+        await showDialog({ title: 'Tests Location Saved', body: `Tests location set to: ${path}`, buttons: [Dialog.okButton()] });
+      }
+    });
+    // End set tests location command
+
     const category = 'M269-25j';
     // Add commands to pallette
     palette.addItem({ command: prep_command, category, args: { origin: 'from palette' } });
@@ -1009,6 +1059,7 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
     palette.addItem({ command: al_tests_command, category, args: {origin: 'from palette' }});
     palette.addItem({ command: open_all_tmas, category, args: {origin: 'from palette' }});
     palette.addItem({ command: finish_marking, category, args: {origin: 'from palette' }});
+    palette.addItem({ command: set_tests_location_command, category, args: {origin: 'from palette' }});
 
     // Add M269 menu to menubar
     const menu = new Menu({ commands: app.commands });
