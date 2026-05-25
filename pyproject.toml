@@ -34,7 +34,7 @@ fields = ["description", "authors", "urls", "keywords"]
 
 [tool.hatch.build.targets.sdist]
 artifacts = ["m269_25j_marking_tool/labextension"]
-exclude = [".github", "binder"]
+exclude = [".github", "binder", ".claude"]
 
 [tool.hatch.build.targets.wheel.shared-data]
 "m269_25j_marking_tool/labextension" = "share/jupyter/labextensions/m269-25j-marking-tool"
