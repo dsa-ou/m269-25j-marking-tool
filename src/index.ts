@@ -120,6 +120,7 @@ def create_summary_table() -> None:
         <tr>
             <th>Question</th>
             <th>Fail</th>
+            <th>Bare Pass</th>
             <th>Pass</th>
             <th>Merit</th>
             <th>Distinction</th>
@@ -133,6 +134,7 @@ def create_summary_table() -> None:
     # Loop through the dictionary to populate rows
     for question, values in question_marks.items():
         fail = values.get("fail", "-")
+        bare_pass = values.get("bare pass", "-")
         passed = values.get("pass", "-")
         merit = values.get("merit", "-")
         distinction = values.get("distinction", "-")
@@ -155,12 +157,14 @@ def create_summary_table() -> None:
             <td>{}</td>
             <td>{}</td>
             <td>{}</td>
+            <td>{}</td>
             <td class='{}'>{}</td>
             <td>{}</td>
         </tr>
         """.format(
             question,
             fail,
+            bare_pass,
             passed,
             merit,
             distinction,
@@ -172,7 +176,7 @@ def create_summary_table() -> None:
     # Add total row
     html += """
     <tr>
-        <td colspan='6'><b>Total Marks</b></td>
+        <td colspan='7'><b>Total Marks</b></td>
         <td><b>{}</b></td>
     </tr>
     """.format(total_marks)
@@ -242,7 +246,7 @@ const question_marks_tma03 = `    question_marks = {
           "awarded": None},
         "Q2a": {"fail": 0, "bare pass": 3,                        "distinction": 6,
           "awarded": None},
-        "Q2b": {"fail": 0,                 "pass": 3,             "distinction": 6,
+        "Q2b": {"fail": 0, "bare pass": 3,                        "distinction": 6,
           "awarded": None},
         "Q2c": {"fail": 0, "bare pass": 4, "pass": 6, "merit": 8, "distinction": 10,
           "awarded": None},
