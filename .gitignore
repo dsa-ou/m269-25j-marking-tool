@@ -124,3 +124,6 @@ dmypy.json
 D3-STUDENT-UNMARKED.ipynb
 D3-STUDENT.ipynb
 marks.dat
+
+# Plaintext AL tests (never commit)
+al_tests_source.py
