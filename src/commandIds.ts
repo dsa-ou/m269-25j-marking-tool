@@ -1,0 +1,10 @@
+export const prep_command = 'm269-25j-marking-tool:prep';
+export const colourise_command = 'm269-25j-marking-tool:colourise';
+export const prep_for_students = 'm269-25j-marking-tool:prep_for_students';
+export const al_tests_command = 'm269-25j-prep-al-tests';
+export const open_all_tmas = 'm269-25j-marking-tool:open_all_tmas';
+export const finish_marking = 'm269-25j-marking-tool:finish_marking';
+export const set_tests_location_command = 'm269-25j-marking-tool:set_tests_location';
+export const change_decrypt_key_command = 'm269-25j-marking-tool:change_decrypt_key';
+export const write_al_test_file_command = 'm269-25j-marking-tool:write_al_test_file';
+export const force_write_al_test_file_command = 'm269-25j-marking-tool:force_write_al_test_file';
