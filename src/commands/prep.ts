@@ -1,9 +1,10 @@
 import { NotebookPanel } from '@jupyterlab/notebook';
+import { showDialog, Dialog } from '@jupyterlab/apputils';
 import { CodeCell } from '@jupyterlab/cells';
 import { IM269Context } from '../context';
 import { prep_command, colourise_command, al_tests_command } from '../commandIds';
 import { initial_code_cell_pt1, initial_code_cell_pt2 } from '../python/initialCell';
-import { questionMarks } from '../tma/markSchemes';
+import { markSchemes, checkMarkScheme, questionMarksPython } from '../tma/markSchemes';
 import { validateTmaNotebook } from '../tma/validate';
 
 export function registerPrep(ctx: IM269Context): void {
@@ -24,6 +25,15 @@ export function registerPrep(ctx: IM269Context): void {
         if (tmaNumber === null) {
           return;
         }
+        const problems = checkMarkScheme(markSchemes[tmaNumber]);
+        if (problems.length) {
+          await showDialog({
+            title: `TMA ${tmaNumber} mark scheme has errors`,
+            body: problems.join('\n'),
+            buttons: [Dialog.okButton()]
+          });
+          return;
+        }
         // Duplicate the file
         const oldName = currentWidget.context.path;
         const newName = oldName.replace(/\.ipynb$/, '-UNMARKED.ipynb');
@@ -36,7 +46,7 @@ export function registerPrep(ctx: IM269Context): void {
         const cell = notebook.activeCell;
         //console.log("Getting TMA number");
         if (cell && cell.model.type === 'code') {
-          const question_marks = questionMarks[tmaNumber];
+          const question_marks = questionMarksPython(markSchemes[tmaNumber]);
           (cell as CodeCell).model.sharedModel.setSource(`${initial_code_cell_pt1}\n\n${question_marks}\n\n${initial_code_cell_pt2}`);
           cell.model.setMetadata('CELLTYPE','MARKCODE');
           await app.commands.execute('notebook:run-cell');

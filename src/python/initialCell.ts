@@ -1,3 +1,5 @@
+import { BANDS, BAND_LABELS } from '../tma/markSchemes';
+
 // Initial code cell code pt 1
 export const initial_code_cell_pt1 = `import pickle # allowed
 from IPython.display import display, Markdown, HTML # allowed
@@ -62,6 +64,9 @@ def generate_radio_buttons(question_id: str) -> None:
     display(radio_buttons)
 
 
+MARK_BANDS = ${JSON.stringify(BANDS)}
+BAND_LABELS = ${JSON.stringify(BAND_LABELS)}
+
 def create_summary_table() -> None:
     """Generate and display an HTML table from the question_marks dictionary."""
     if not question_marks:
@@ -87,25 +92,25 @@ def create_summary_table() -> None:
     <table>
         <tr>
             <th>Question</th>
-            <th>Fail</th>
-            <th>Bare Pass</th>
-            <th>Pass</th>
-            <th>Merit</th>
-            <th>Distinction</th>
-            <th>Awarded</th>
-            <th>Marks</th>
-        </tr>
     """
+
+    # Only show the bands used in this TMA
+    bands = []
+    for band in MARK_BANDS:
+        used = False
+        for values in question_marks.values():
+            if band in values:
+                used = True
+        if used:
+            bands.append(band)
+    for band in bands:
+        html += "<th>{}</th>".format(BAND_LABELS[band])
+    html += "<th>Awarded</th><th>Marks</th></tr>"
 
     total_marks = 0  # Sum of all selected marks
 
     # Loop through the dictionary to populate rows
     for question, values in question_marks.items():
-        fail = values.get("fail", "-")
-        bare_pass = values.get("bare pass", "-")
-        passed = values.get("pass", "-")
-        merit = values.get("merit", "-")
-        distinction = values.get("distinction", "-")
         awarded = values.get("awarded", None)
 
         # If marked is None, highlight the cell
@@ -118,24 +123,10 @@ def create_summary_table() -> None:
         else:
             marks = 0
 
-        html += """
-        <tr>
-            <td>{}</td>
-            <td>{}</td>
-            <td>{}</td>
-            <td>{}</td>
-            <td>{}</td>
-            <td>{}</td>
-            <td class='{}'>{}</td>
-            <td>{}</td>
-        </tr>
-        """.format(
-            question,
-            fail,
-            bare_pass,
-            passed,
-            merit,
-            distinction,
+        html += "<tr><td>{}</td>".format(question)
+        for band in bands:
+            html += "<td>{}</td>".format(values.get(band, "-"))
+        html += "<td class='{}'>{}</td><td>{}</td></tr>".format(
             awarded_class,
             awarded_display,
             marks
@@ -144,10 +135,10 @@ def create_summary_table() -> None:
     # Add total row
     html += """
     <tr>
-        <td colspan='7'><b>Total Marks</b></td>
+        <td colspan='{}'><b>Total Marks</b></td>
         <td><b>{}</b></td>
     </tr>
-    """.format(total_marks)
+    """.format(len(bands) + 2, total_marks)
 
     html += "</table>"
     # Display the table in the Jupyter Notebook

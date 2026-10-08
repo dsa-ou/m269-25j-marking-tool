@@ -40,7 +40,7 @@ export { decrypt } from './alTests/decrypt';
  */
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'm269-25j-marking-tool:plugin',
-  description: 'A tutor marking tool for M269 in the 25J presentation',
+  description: 'A tutor marking tool for M269 from the 25J presentation onwards.',
   autoStart: true,
   requires: [ICommandPalette, INotebookTracker, ISettingRegistry, IDocumentManager, IMainMenu as any],
   activate: async (
@@ -67,7 +67,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     registerChangeDecryptKey(ctx);
     registerWriteAlTestFile(ctx);
 
-    const category = 'M269-25j';
+    const category = 'M269';
     // Add commands to pallette
     palette.addItem({ command: prep_command, category, args: { origin: 'from palette' } });
     palette.addItem({ command: colourise_command, category, args: { origin: 'from palette' } });

@@ -1,7 +1,7 @@
 {
     "name": "m269-25j-marking-tool",
     "version": "26.1.0",
-    "description": "A tutor marking tool for M269 in the 25J presentation",
+    "description": "A tutor marking tool for M269 from the 25J presentation onwards.",
     "keywords": [
         "jupyter",
         "jupyterlab",
