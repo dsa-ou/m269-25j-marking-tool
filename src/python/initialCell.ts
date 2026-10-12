@@ -1,4 +1,4 @@
-import { BANDS, BAND_LABELS } from '../tma/markSchemes';
+import { BANDS, bandLabelsPython } from '../tma/markSchemes';
 
 // Initial code cell code pt 1
 export const initial_code_cell_pt1 = `import pickle # allowed
@@ -6,11 +6,11 @@ from IPython.display import display, Markdown, HTML # allowed
 from typing import TypedDict # allowed
 import ipywidgets as widgets  # allowed
 
-class ObserveChange(TypedDict):
+class ObserveChange(TypedDict): # allowed
     """Type definitios for radio buttons."""
 
-    new: str | None
-    old: str | None
+    new: str | None # allowed
+    old: str | None # allowed
     name: str
     owner: widgets.RadioButtons
     type: str
@@ -65,7 +65,7 @@ def generate_radio_buttons(question_id: str) -> None:
 
 
 MARK_BANDS = ${JSON.stringify(BANDS)}
-BAND_LABELS = ${JSON.stringify(BAND_LABELS)}
+${bandLabelsPython()}
 
 def create_summary_table() -> None:
     """Generate and display an HTML table from the question_marks dictionary."""
@@ -104,7 +104,7 @@ def create_summary_table() -> None:
         if used:
             bands.append(band)
     for band in bands:
-        html += "<th>{}</th>".format(BAND_LABELS[band])
+        html += "<th>{}</th>".format(BAND_LABELS[band]) # allowed
     html += "<th>Awarded</th><th>Marks</th></tr>"
 
     total_marks = 0  # Sum of all selected marks
@@ -123,10 +123,10 @@ def create_summary_table() -> None:
         else:
             marks = 0
 
-        html += "<tr><td>{}</td>".format(question)
+        html += "<tr><td>{}</td>".format(question) # allowed
         for band in bands:
-            html += "<td>{}</td>".format(values.get(band, "-"))
-        html += "<td class='{}'>{}</td><td>{}</td></tr>".format(
+            html += "<td>{}</td>".format(values.get(band, "-")) # allowed
+        html += "<td class='{}'>{}</td><td>{}</td></tr>".format( # allowed
             awarded_class,
             awarded_display,
             marks

@@ -1,3 +1,4 @@
+import { showDialog, Dialog } from '@jupyterlab/apputils';
 import { PageConfig } from '@jupyterlab/coreutils';
 import { walkDir } from '../utils/files';
 import { ensurePopupsAllowed } from '../utils/popups';
@@ -12,6 +13,16 @@ export function registerOpenAllTmas(ctx: IM269Context): void {
     caption: 'M269 Open All TMAs',
     
     execute: async (args: any) => {
+      // TEMPORARY: disabled until it handles the Marked folders
+      const underDevelopment = true as boolean;
+      if (underDevelopment) {
+        await showDialog({
+          title: 'M269 Open All TMAs',
+          body: 'This functionality is under development.',
+          buttons: [Dialog.okButton()]
+        });
+        return;
+      }
       // Ask for popup permission (or instructions if blocked)
       const ok = await ensurePopupsAllowed();
       if (!ok) return; // user cancelled

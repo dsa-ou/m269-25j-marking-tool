@@ -1,7 +1,9 @@
-import { ENCRYPTED_BASE64 } from './encrypted';
+// al_tests.enc at the top of the repo, bundled as text (see webpack.config.js).
+// The path works from both src/alTests/ and the compiled lib/alTests/.
+import ENCRYPTED_BASE64 from '../../al_tests.enc';
 
 export async function decrypt(keyText: string): Promise<string> {
-  const encryptedBytes = Uint8Array.from(atob(ENCRYPTED_BASE64), c => c.charCodeAt(0));
+  const encryptedBytes = Uint8Array.from(atob(ENCRYPTED_BASE64.trim()), c => c.charCodeAt(0));
   const iv = encryptedBytes.slice(0, 12);
   const ciphertext = encryptedBytes.slice(12);
 

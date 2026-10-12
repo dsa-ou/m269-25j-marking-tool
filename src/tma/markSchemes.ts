@@ -19,68 +19,25 @@ export const TMA_TOTAL = 100;
 
 // TMA 01
 const tma01: MarkScheme = {
-  'Q1a':   { 'fail': 0, 'pass': 2 },
-  'Q1b':   { 'fail': 0, 'pass': 2 },
-  'Q1c':   { 'fail': 0, 'pass': 2 },
-  'Q2a':   { 'fail': 0, 'pass': 3, 'merit': 6, 'distinction': 8 },
-  'Q2bi':  { 'fail': 0, 'pass': 5, 'merit': 9, 'distinction': 13 },
-  'Q2bii': { 'fail': 0, 'pass': 2 },
-  'Q2c':   { 'fail': 0, 'pass': 3, 'merit': 6, 'distinction': 8 },
-  'Q2d':   { 'fail': 0, 'pass': 2, 'merit': 3, 'distinction': 5 },
-  'Q3a':   { 'fail': 0, 'pass': 4, 'merit': 7, 'distinction': 10 },
-  'Q3b':   { 'fail': 0, 'pass': 2 },
-  'Q4a':   { 'fail': 0, 'pass': 2, 'merit': 4, 'distinction': 6 },
-  'Q4b':   { 'fail': 0, 'pass': 2, 'merit': 4 },
-  'Q5a':   { 'fail': 0, 'pass': 2, 'merit': 4, 'distinction': 6 },
-  'Q5b':   { 'fail': 0, 'pass': 3, 'merit': 5, 'distinction': 8 },
-  'Q5c':   { 'fail': 0, 'pass': 2, 'merit': 4, 'distinction': 6 },
-  'Q6a':   { 'fail': 0, 'pass': 4, 'merit': 7, 'distinction': 10 },
-  'Q6b':   { 'fail': 0, 'pass': 3, 'merit': 6 }
+  'Q1a':    { 'fail': 0, 'bare pass': 3, 'pass': 4, 'merit': 6, 'distinction': 8},
+  'Q1bi':   { 'fail': 0, 'bare pass': 4, 'pass': 5, 'merit': 7, 'distinction': 10},
+  'Q1bii':  { 'fail': 0, 'bare pass': 3,                        'distinction': 6},
+  'Q2a':   { 'fail': 0, 'bare pass': 4, 'pass': 5, 'merit': 7, 'distinction': 9},
+  'Q2b':   { 'fail': 0, 'bare pass': 3, 'pass': 4, 'merit': 6, 'distinction': 8},
+  'Q3a':   { 'fail': 0, 'bare pass': 4,            'merit': 6, 'distinction': 8},
+  'Q3b':   { 'fail': 0,                                        'distinction': 3},
+  'Q4a':   { 'fail': 0, 'bare pass': 4, 'pass': 5, 'merit': 8, 'distinction': 12},
+  'Q4b':   { 'fail': 0, 'bare pass': 4, 'pass': 5, 'merit': 7, 'distinction': 10},
+  'Q5a':   { 'fail': 0, 'bare pass': 4, 'pass': 5, 'merit': 9, 'distinction': 14},
+  'Q5b':   { 'fail': 0, 'bare pass': 4, 'pass': 5, 'merit': 8, 'distinction': 12}
 };
 
 // TMA 02
 const tma02: MarkScheme = {
-  'Q1a':   { 'fail': 0, 'distinction': 2 },
-  'Q1b':   { 'fail': 0, 'distinction': 2 },
-  'Q1c':   { 'fail': 0, 'distinction': 2 },
-  'Q2a':   { 'fail': 0, 'pass': 3, 'merit': 6, 'distinction': 9 },
-  'Q2b':   { 'fail': 0, 'pass': 2, 'merit': 4, 'distinction': 6 },
-  'Q2c':   { 'fail': 0, 'pass': 2, 'merit': 4, 'distinction': 6 },
-  'Q3a':   { 'fail': 0, 'pass': 2, 'merit': 4, 'distinction': 6 },
-  'Q3bi':  { 'fail': 0, 'pass': 1, 'distinction': 3 },
-  'Q3bii': { 'fail': 0, 'distinction': 4 },
-  'Q4a':   { 'fail': 0, 'pass': 2, 'merit': 4, 'distinction': 6 },
-  'Q4b':   { 'fail': 0, 'pass': 2, 'distinction': 4 },
-  'Q4c':   { 'fail': 0, 'pass': 6, 'merit': 10, 'distinction': 14 },
-  'Q5a':   { 'fail': 0, 'distinction': 2 },
-  'Q5b':   { 'fail': 0, 'distinction': 2 },
-  'Q5c':   { 'fail': 0, 'distinction': 2 },
-  'Q5d':   { 'fail': 0, 'distinction': 2 },
-  'Q5e':   { 'fail': 0, 'pass': 1, 'merit': 2 },
-  'Q5f':   { 'fail': 0, 'distinction': 2 },
-  'Q6a':   { 'fail': 0, 'pass': 7, 'merit': 12, 'distinction': 16 },
-  'Q6bi':  { 'fail': 0, 'pass': 2, 'distinction': 4 },
-  'Q6bii': { 'fail': 0, 'pass': 2, 'distinction': 4 }
 };
 
 // TMA 03
 const tma03: MarkScheme = {
-  'Q1a': { 'fail': 0, 'bare pass': 3, 'pass': 4, 'merit': 5, 'distinction': 6 },
-  'Q1b': { 'fail': 0, 'bare pass': 2,                        'distinction': 4 },
-  'Q1c': { 'fail': 0, 'bare pass': 2,                        'distinction': 4 },
-  'Q1d': { 'fail': 0, 'bare pass': 3,            'merit': 5, 'distinction': 6 },
-  'Q1e': { 'fail': 0, 'bare pass': 3, 'pass': 4, 'merit': 6, 'distinction': 8 },
-  'Q1f': { 'fail': 0, 'bare pass': 3, 'pass': 4, 'merit': 6, 'distinction': 8 },
-  'Q2a': { 'fail': 0, 'bare pass': 3,                        'distinction': 6 },
-  'Q2b': { 'fail': 0, 'bare pass': 3,                        'distinction': 6 },
-  'Q2c': { 'fail': 0, 'bare pass': 4, 'pass': 6, 'merit': 8, 'distinction': 10 },
-  'Q3a': { 'fail': 0, 'bare pass': 2,                        'distinction': 4 },
-  'Q3b': { 'fail': 0, 'bare pass': 3,            'merit': 5, 'distinction': 6 },
-  'Q4a': { 'fail': 0, 'bare pass': 3, 'pass': 4, 'merit': 6, 'distinction': 8 },
-  'Q4b': { 'fail': 0, 'bare pass': 3, 'pass': 4, 'merit': 6, 'distinction': 8 },
-  'Q4c': { 'fail': 0, 'bare pass': 2,            'merit': 3, 'distinction': 4 },
-  'Q4d': { 'fail': 0, 'bare pass': 3, 'pass': 4, 'merit': 6, 'distinction': 8 },
-  'Q5':  { 'fail': 0,                                        'distinction': 4 }
 };
 
 export const markSchemes: Record<number, MarkScheme> = {
@@ -119,17 +76,52 @@ export function checkMarkScheme(scheme: MarkScheme): string[] {
   return problems;
 }
 
+// Generated Python must fit within this line length, including comments
+const MAX_LINE = 79;
+const ALLOWED = ' # allowed';
+
+/**
+ * Lay out Python items (e.g. '"fail": 0') after a prefix, wrapping onto
+ * lines indented by `indent` so that no line, with its trailing
+ * ' # allowed', is longer than MAX_LINE.
+ */
+export function wrapPythonItems(prefix: string, items: string[], suffix: string, indent: string): string[] {
+  const lines: string[] = [];
+  let line = prefix;
+  items.forEach((item, i) => {
+    const piece = item + (i < items.length - 1 ? ',' : suffix);
+    const sep = line === prefix || line === indent ? '' : ' ';
+    if (line !== prefix && line !== indent &&
+        (line + sep + piece + ALLOWED).length > MAX_LINE) {
+      lines.push(line + ALLOWED);
+      line = indent + piece;
+    } else {
+      line += sep + piece;
+    }
+  });
+  lines.push(line + ALLOWED);
+  return lines;
+}
+
 /**
  * The Python assignment of question_marks for the initial marking cell.
  * Indented as it sits inside the except block that runs when marks.dat
  * does not exist yet.
  */
 export function questionMarksPython(scheme: MarkScheme): string {
-  const lines = Object.entries(scheme).map(([question, marks]) => {
-    const bands = BANDS
+  const lines: string[] = [];
+  for (const [question, marks] of Object.entries(scheme)) {
+    const items = BANDS
       .filter(band => band in marks)
       .map(band => `"${band}": ${marks[band]}`);
-    return `        "${question}": {${bands.join(', ')}, "awarded": None},`;
-  });
-  return `    question_marks = {\n${lines.join('\n')}\n    }`;
+    items.push('"awarded": None');
+    lines.push(...wrapPythonItems(`        "${question}": {`, items, '},', '            '));
+  }
+  return `    question_marks = {${ALLOWED}\n${lines.join('\n')}\n    }`;
+}
+
+// The BAND_LABELS assignment for the initial marking cell
+export function bandLabelsPython(): string {
+  const items = BANDS.map(band => `"${band}": "${BAND_LABELS[band]}"`);
+  return wrapPythonItems('BAND_LABELS = {', items, '}', '    ').join('\n');
 }

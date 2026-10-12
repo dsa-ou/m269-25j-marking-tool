@@ -127,3 +127,9 @@ marks.dat
 
 # Plaintext AL tests (never commit)
 al_tests_source.py
+
+# Claude Code local settings (contain tokens)
+.claude/
+
+# AL tests encryption script (never commit)
+scripts/encrypt-al-tests.mjs

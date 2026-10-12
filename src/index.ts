@@ -23,7 +23,7 @@ import {
 } from './commandIds';
 import { IM269Context } from './context';
 import { injectCellStyles } from './styles';
-import { registerPrep } from './commands/prep';
+import { registerPrepForMarking } from './commands/prepForMarking';
 import { registerFinishMarking } from './commands/finishMarking';
 import { registerColourise } from './commands/colourise';
 import { registerPrepForStudents } from './commands/prepForStudents';
@@ -57,7 +57,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     injectCellStyles(settings);
 
     const ctx: IM269Context = { app, settings, notebookTracker, docManager };
-    registerPrep(ctx);
+    registerPrepForMarking(ctx);
     registerFinishMarking(ctx);
     registerColourise(ctx);
     registerPrepForStudents(ctx);

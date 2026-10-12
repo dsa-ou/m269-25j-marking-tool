@@ -95,6 +95,7 @@
     "jupyterlab": {
         "extension": true,
         "outputDir": "m269_25j_marking_tool/labextension",
+        "webpackConfig": "./webpack.config.js",
         "schemaDir": "schema"
     },
     "eslintIgnore": [
