@@ -1,4 +1,5 @@
 import { NotebookPanel } from '@jupyterlab/notebook';
+import { runActiveCell } from '../utils/runCell';
 import { CodeCell } from '@jupyterlab/cells';
 import { IM269Context } from '../context';
 import { al_tests_command } from '../commandIds';
@@ -31,7 +32,7 @@ export function registerAlTests(ctx: IM269Context): void {
           const cell = notebook.activeCell;
           const code = `%run -i ${alTestsRunPath(settings, notebookPath)}`;
           (cell as CodeCell).model.sharedModel.setSource(code);
-          await app.commands.execute('notebook:run-cell');
+          await runActiveCell(app, notebook);
           // 2. Check TMA number
           const metadata = currentWidget?.context?.model?.metadata;
           console.log('metadata');

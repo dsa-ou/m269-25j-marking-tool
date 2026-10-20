@@ -1,4 +1,5 @@
 import { NotebookPanel } from '@jupyterlab/notebook';
+import { runActiveCell } from '../utils/runCell';
 import { showDialog, Dialog } from '@jupyterlab/apputils';
 import { CodeCell } from '@jupyterlab/cells';
 import { IM269Context } from '../context';
@@ -169,7 +170,7 @@ export function registerPrepForMarking(ctx: IM269Context): void {
           const question_marks = questionMarksPython(markSchemes[tmaNumber]);
           (cell as CodeCell).model.sharedModel.setSource(`${initial_code_cell_pt1}\n\n${question_marks}\n\n${initial_code_cell_pt2}`);
           cell.model.setMetadata('CELLTYPE','MARKCODE');
-          await app.commands.execute('notebook:run-cell');
+          await runActiveCell(app, notebook);
           if (cell) {
             cell.inputHidden = true;
           }
@@ -186,7 +187,7 @@ export function registerPrepForMarking(ctx: IM269Context): void {
           //console.log(questionValue);
           if (celltype == 'TMACODE') {
             notebook.activeCellIndex = i;
-            await app.commands.execute('notebook:run-cell');
+            await runActiveCell(app, notebook);
           }
           if (questionValue !== undefined) {
             notebook.activeCellIndex = i;
@@ -197,7 +198,7 @@ export function registerPrepForMarking(ctx: IM269Context): void {
 generate_radio_buttons(${JSON.stringify(questionValue)})`);
               insertedCell.model.setMetadata('CELLTYPE','MARKCODE');
             }
-            await app.commands.execute('notebook:run-cell');
+            await runActiveCell(app, notebook);
             i++; // Skip over inserted cell to avoid infinite loop
             
             notebook.activeCellIndex = i;
@@ -211,7 +212,7 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
             } else {
               //console.log('markdown cell cannot be metadatad');
             }
-            await app.commands.execute('notebook:run-cell');
+            await runActiveCell(app, notebook);
             i++; // Skip over inserted cell to avoid infinite loop
           }
         }
@@ -239,7 +240,7 @@ generate_radio_buttons(${JSON.stringify(questionValue)})`);
           //console.log('could not get or not code');
         }
         //console.log('activating');
-        await app.commands.execute('notebook:run-cell');
+        await runActiveCell(app, notebook);
         // Automatically run the colourise command after prep
         await app.commands.execute(colourise_command);
         // Automatically run AL Tests after colourise

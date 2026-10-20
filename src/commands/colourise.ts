@@ -1,4 +1,5 @@
 import { NotebookPanel } from '@jupyterlab/notebook';
+import { runActiveCell } from '../utils/runCell';
 import { IM269Context } from '../context';
 import { colourise_command } from '../commandIds';
 
@@ -25,13 +26,13 @@ export function registerColourise(ctx: IM269Context): void {
             currentCell.addClass('m269-feedback');
             if (currentCell.model.type === 'code') {
               notebook.activeCellIndex = i;
-              await app.commands.execute('notebook:run-cell');
+              await runActiveCell(app, notebook);
             }
           } else if (celltype === "MARKCODE") {
             currentCell.addClass('m269-feedback');
             if (currentCell.model.type === 'code') {
               notebook.activeCellIndex = i;
-              await app.commands.execute('notebook:run-cell');
+              await runActiveCell(app, notebook);
             }
           } else if (celltype === "SOLUTION" || celltype === "SECREF" || celltype === "GRADING") {
             currentCell.addClass('m269-tutor');
