@@ -48,7 +48,8 @@ export function registerPrepForMarking(ctx: IM269Context): void {
         if (inMarkedFolder) {
           console.log("Already in marked folder.");
         } else {
-          await currentWidget.context.save(); // Save this notebook.
+          console.log("Don't press save!")
+          // await currentWidget.context.save(); // Save this notebook.
 
           // Check if we're in the folder. If we're in it, fine. 
           // If we're not, create it. If it exists and we're not in it, stop.
