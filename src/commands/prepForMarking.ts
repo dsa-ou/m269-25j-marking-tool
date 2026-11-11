@@ -65,16 +65,20 @@ export function registerPrepForMarking(ctx: IM269Context): void {
           }
 
           if (exists) {
-            await showDialog({
+            const result = await showDialog({
               title: 'Marked folder already exists',
-              body: `"${markedFolder}" already exists. For security this won't be copied into it. Either delete the folder or copy the notebook manually into it and open from there.`,
-              buttons: [Dialog.okButton()]
+              body: `"${markedFolder}" already exists. Anything in
+              there might be overwritten. Only press OK if you are
+              happy to progress.`,
+              buttons: [Dialog.cancelButton(), Dialog.okButton()]
             });
-            return;
+            if (!result.button.accept) {
+              return; // Cancelled (or dialog closed)
+            }
+          } else {
+            // Create it
+            await contents.save(markedFolder, { type: 'directory' });
           }
-
-          // Create it
-          await contents.save(markedFolder, { type: 'directory' });
 
         }
 
